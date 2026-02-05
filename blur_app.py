@@ -32,7 +32,7 @@ with tab1:
         st.write(f"**元のサイズ:** {original_width} × {original_height}")
         
         # スライダーで強度を指定（0～100）
-        strength = st.slider("ぼかしの強度", min_value=0, max_value=100, value=50, step=1, key="blur_strength")
+        strength = st.slider("ぼかしの強度", min_value=0, max_value=100, value=10, step=1, key="blur_strength")
         
         if strength > 0:
             # 強度をフィルタの半径に変換（0～50に正規化）
@@ -42,7 +42,7 @@ with tab1:
             blurred_img = img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
             
             st.subheader("プレビュー")
-            st.image(blurred_img, use_column_width=True)
+            st.image(blurred_img, width=400)
             
             st.subheader("ダウンロード")
             
@@ -59,7 +59,7 @@ with tab1:
             )
         else:
             st.subheader("プレビュー")
-            st.image(img, use_column_width=True)
+            st.image(img, width=400)
             st.info("強度を0より大きい値に設定してください")
     else:
         st.info("👆 画像をアップロードしてください")
