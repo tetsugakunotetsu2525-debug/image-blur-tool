@@ -1,8 +1,6 @@
 import streamlit as st
 from PIL import Image, ImageFilter
-import numpy as np
 from io import BytesIO
-import cv2
 
 st.set_page_config(page_title="画像ツール", layout="wide")
 
@@ -36,7 +34,7 @@ with tab1:
         # ぼかしの種類を選択
         blur_type = st.selectbox(
             "ぼかしの種類を選択",
-            ["ガウシアンブラー", "ボックスブラー", "モーションブラー", "メディアンブラー", "ラジアルブラー", "ズームブラー"],
+            ["ガウシアンブラー", "ボックスブラー"],
             key="blur_type"
         )
         
@@ -44,9 +42,6 @@ with tab1:
         strength = st.slider("ぼかしの強度", min_value=0, max_value=100, value=10, step=1, key="blur_strength")
         
         if strength > 0:
-            blurred_img = img.copy()
-            img_array = np.array(img)
-            
             if blur_type == "ガウシアンブラー":
                 blur_radius = int((strength / 100) * 50)
                 if blur_radius % 2 == 0:
@@ -58,41 +53,6 @@ with tab1:
                 if blur_radius % 2 == 0:
                     blur_radius += 1
                 blurred_img = img.filter(ImageFilter.BoxBlur(blur_radius))
-            
-            elif blur_type == "モーションブラー":
-                kernel_size = int((strength / 100) * 50)
-                if kernel_size % 2 == 0:
-                    kernel_size += 1
-                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
-                blurred_array = cv2.filter2D(img_array, -1, kernel)
-                blurred_img = Image.fromarray(blurred_array)
-            
-            elif blur_type == "メディアンブラー":
-                kernel_size = int((strength / 100) * 50)
-                if kernel_size % 2 == 0:
-                    kernel_size += 1
-                blurred_array = cv2.medianBlur(img_array, kernel_size)
-                blurred_img = Image.fromarray(blurred_array)
-            
-            elif blur_type == "ラジアルブラー":
-                blur_radius = int((strength / 100) * 50)
-                if blur_radius % 2 == 0:
-                    blur_radius += 1
-                h, w = img_array.shape[:2]
-                center = (w // 2, h // 2)
-                blurred_array = cv2.GaussianBlur(img_array, (blur_radius, blur_radius), 0)
-                blurred_img = Image.fromarray(blurred_array)
-            
-            elif blur_type == "ズームブラー":
-                kernel_size = int((strength / 100) * 50)
-                if kernel_size % 2 == 0:
-                    kernel_size += 1
-                h, w = img_array.shape[:2]
-                center_y, center_x = h // 2, w // 2
-                zoom = 1 + (strength / 100) * 0.5
-                
-                blurred_array = cv2.GaussianBlur(img_array, (kernel_size, kernel_size), 0)
-                blurred_img = Image.fromarray(blurred_array)
             
             st.subheader("プレビュー")
             st.image(blurred_img, width=400)
