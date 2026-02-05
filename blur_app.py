@@ -34,7 +34,7 @@ with tab1:
         # ぼかしの種類を選択
         blur_type = st.selectbox(
             "ぼかしの種類を選択",
-            ["ガウシアンブラー", "ボックスブラー"],
+            ["ガウシアンブラー", "ボックスブラー", "メディアンフィルタ", "SMOOTH"],
             key="blur_type"
         )
         
@@ -53,6 +53,18 @@ with tab1:
                 if blur_radius % 2 == 0:
                     blur_radius += 1
                 blurred_img = img.filter(ImageFilter.BoxBlur(blur_radius))
+            
+            elif blur_type == "メディアンフィルタ":
+                blur_radius = int((strength / 100) * 50)
+                if blur_radius % 2 == 0:
+                    blur_radius += 1
+                blurred_img = img.filter(ImageFilter.MedianFilter(size=blur_radius))
+            
+            elif blur_type == "SMOOTH":
+                blur_radius = int((strength / 100) * 5)
+                blurred_img = img
+                for _ in range(blur_radius + 1):
+                    blurred_img = blurred_img.filter(ImageFilter.SMOOTH)
             
             st.subheader("プレビュー")
             st.image(blurred_img, width=400)
